@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <title>ChatBot</title>
+</head>
+<body>
+    <img class="chatbotImage" src="./chatbot.png" />
+    <span id="chatbotOutput" class="chatbotOutput">Talk to me.</span>
+    <input id="chatbotInput" class="chatbotInput" />
+    <input id="submitButton" type="submit" />
+    <script>
+        const submitButton = document.getElementById('submitButton');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotOutput = document.getElementById('chatbotOutput');
+
+        submitButton.onclick = userSubmitEventHandler;
+        chatbotInput.onkeyup = userSubmitEventHandler;
+
+        function userSubmitEventHandler(event) {
+            if((event.keyCode && event.keyCode === 13) || event.type === 'click'){
+                chatbotOutput.innerText = 'thinking...';
+                askChatBot(chatbotInput.value);
+            }
+        }
+
+        function askChatBot(userInput) {
+            const myRequest = new Request('/', {
+                method: 'POST',
+                body: userInput
+            });
+
+            fetch(myRequest).then(function(response) {
+                if(!response.ok) {
+                    throw new Error('HTTP error, status = ' + response.status);
+                } 
+                else {
+                    return response.text();
+                }
+            }).then(function(text) {
+                chatbotInput.value = '';
+                chatbotOutput.innerText = text;
+            }).catch((err) => {
+                console.error(err);
+            });
+        }
+    </script>
+</body>
+</html>
